@@ -1,7 +1,8 @@
 """Tests: blocked drain event through the full engine pipeline."""
 
+from datetime import UTC, datetime
+
 import pytest
-from datetime import datetime, timezone
 
 from src.engine.engine import SituationEngine
 from src.engine.normalizer import EventNormalizer
@@ -10,8 +11,10 @@ from src.models.evidence import EvidenceSource
 from src.models.incident import SeverityLevel
 from src.models.situation import ZoneSeverity
 from tests.scenarios.ward12 import (
-    CITY, ZONE, make_resources,
+    CITY,
     SCENARIO_BLOCKED_DRAIN,
+    ZONE,
+    make_resources,
 )
 
 
@@ -31,7 +34,7 @@ def _drain_event(water_level_m: float | None = None, source: str = "sensor") -> 
         city=CITY,
         zone_id=ZONE,
         source=source,
-        occurred_at=datetime(2025, 7, 10, 10, 0, tzinfo=timezone.utc),
+        occurred_at=datetime(2025, 7, 10, 10, 0, tzinfo=UTC),
         payload=payload,
     )
 

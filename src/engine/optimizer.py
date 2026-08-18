@@ -52,19 +52,18 @@ from typing import Protocol, runtime_checkable
 
 from src.engine.optimizer_request import OptimizationRequest
 from src.engine.optimizer_result import (
-    Assignment,
-    OptimizationResult,
-    UnassignedIncident,
     OA_BEST_FIT,
     OA_NEAREST,
     OA_ONLY_AVAILABLE,
     UA_ALL_TOO_FAR,
     UA_NO_CAPABLE_RESOURCE,
     UA_NO_RESOURCE,
+    Assignment,
+    OptimizationResult,
+    UnassignedIncident,
 )
 from src.models.incident import SeverityLevel
 from src.models.resource import Resource, ResourceType
-
 
 # ── interface ─────────────────────────────────────────────────────────────────
 

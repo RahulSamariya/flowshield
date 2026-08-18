@@ -10,7 +10,7 @@ The ``raw`` field preserves the full original payload without loss.
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
@@ -76,7 +76,7 @@ class Evidence(BaseModel):
         description="Which system or actor produced this observation.",
     )
     observed_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="UTC timestamp of the observation (not ingestion time).",
     )
 
@@ -117,7 +117,7 @@ class Evidence(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def at_least_one_measurement(self) -> "Evidence":
+    def at_least_one_measurement(self) -> Evidence:
         """Reject evidence that carries no measurement at all."""
         has_data = any(
             v is not None

@@ -5,7 +5,6 @@ from pydantic import ValidationError
 
 from src.models.evidence import Evidence, EvidenceSource
 
-
 # ── helpers ───────────────────────────────────────────────────────────────────
 
 def minimal_evidence(**overrides) -> dict:

@@ -1,14 +1,19 @@
 """Tests: resource becoming unavailable (RESOURCE_STATUS + INFRASTRUCTURE events)."""
 
+from datetime import UTC, datetime
+
 import pytest
-from datetime import datetime, timezone
 
 from src.engine.engine import SituationEngine
 from src.models.event import RawEvent, RawEventType
 from src.models.resource import ResourceStatus
 from tests.scenarios.ward12 import (
-    CITY, ZONE, make_resources,
-    PUMP_IDS, CREW_IDS, DRAIN_IDS,
+    CITY,
+    CREW_IDS,
+    DRAIN_IDS,
+    PUMP_IDS,
+    ZONE,
+    make_resources,
 )
 
 
@@ -28,7 +33,7 @@ def _resource_status_event(resource_id: str, status: str, zone_id: str | None = 
         city=CITY,
         zone_id=ZONE,
         source="mock",
-        occurred_at=datetime(2025, 7, 10, 11, 0, tzinfo=timezone.utc),
+        occurred_at=datetime(2025, 7, 10, 11, 0, tzinfo=UTC),
         payload=payload,
     )
 
@@ -39,7 +44,7 @@ def _infra_event(asset_id: str, blocked: bool) -> RawEvent:
         city=CITY,
         zone_id=ZONE,
         source="mock",
-        occurred_at=datetime(2025, 7, 10, 11, 0, tzinfo=timezone.utc),
+        occurred_at=datetime(2025, 7, 10, 11, 0, tzinfo=UTC),
         payload={"asset_id": asset_id, "blocked": blocked},
     )
 
@@ -48,13 +53,13 @@ def _infra_event(asset_id: str, blocked: bool) -> RawEvent:
 
 class TestResourceStatusEvent:
     def test_pump_becomes_deployed(self, engine):
-        record = engine.process(_resource_status_event(PUMP_IDS[0], "deployed", ZONE))
+        engine.process(_resource_status_event(PUMP_IDS[0], "deployed", ZONE))
         pump = engine.resources[PUMP_IDS[0]]
         assert pump.status == ResourceStatus.DEPLOYED
         assert pump.current_zone_id == ZONE
 
     def test_pump_becomes_unavailable(self, engine):
-        record = engine.process(_resource_status_event(PUMP_IDS[0], "unavailable"))
+        engine.process(_resource_status_event(PUMP_IDS[0], "unavailable"))
         pump = engine.resources[PUMP_IDS[0]]
         assert pump.status == ResourceStatus.UNAVAILABLE
 
@@ -145,7 +150,7 @@ class TestCombinedResourceScenario:
             city=CITY,
             zone_id=ZONE,
             source="mock",
-            occurred_at=datetime(2025, 7, 10, 11, 0, tzinfo=timezone.utc),
+            occurred_at=datetime(2025, 7, 10, 11, 0, tzinfo=UTC),
             payload={"rainfall_mm_hr": 50.0},
         )
         engine.process(rainfall_event)

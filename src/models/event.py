@@ -8,7 +8,7 @@ normalizer.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
@@ -43,7 +43,7 @@ class RawEvent(BaseModel):
     event_type: RawEventType
     city: str = Field(..., min_length=1, max_length=100)
     zone_id: str = Field(..., min_length=1, max_length=50)
-    occurred_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    occurred_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     source: str = Field(default="unknown", max_length=100)
     payload: dict[str, Any] = Field(default_factory=dict)
 

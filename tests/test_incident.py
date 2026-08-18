@@ -1,11 +1,11 @@
 """Unit tests for the Incident domain model."""
 
+from datetime import UTC, datetime
+
 import pytest
-from datetime import datetime, timezone
 from pydantic import ValidationError
 
 from src.models.incident import Incident, IncidentStatus, SeverityLevel
-
 
 # ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -40,7 +40,7 @@ class TestIncidentValid:
         assert "TC-01" in inc.affected_zone_ids
 
     def test_resolved_with_timestamp(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         inc = Incident(**minimal_incident(
             status=IncidentStatus.RESOLVED,
             resolved_at=now,
@@ -73,7 +73,7 @@ class TestIncidentInvalid:
         with pytest.raises(ValidationError, match="resolved_at may only be set"):
             Incident(**minimal_incident(
                 status=IncidentStatus.OPEN,
-                resolved_at=datetime.now(timezone.utc),
+                resolved_at=datetime.now(UTC),
             ))
 
     def test_primary_zone_missing_from_affected_raises(self):

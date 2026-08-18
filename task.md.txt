@@ -1,0 +1,17 @@
+Build a simple FLOWSHIELD command dashboard using the existing APIs/state.
+
+Show only:
+1. Active incidents
+2. Priority ranking
+3. Available resources
+4. Recommended resource allocation
+5. Response actions
+6. WHY panel
+7. Agent/activity timeline
+8. Current situation summary
+
+Do not create new business logic in the frontend.
+
+The frontend must consume the backend state and decision APIs.
+
+Keep the UI visually clean and hackathon-demo friendly.

@@ -11,7 +11,7 @@ Flow position:
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import StrEnum
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -95,8 +95,8 @@ class Resource(BaseModel):
 
     # ── lifecycle ─────────────────────────────────────────────────────────
     status: ResourceStatus = Field(default=ResourceStatus.AVAILABLE)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     # ── metadata ──────────────────────────────────────────────────────────
     notes: str = Field(
@@ -115,7 +115,7 @@ class Resource(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def deployed_requires_current_zone(self) -> "Resource":
+    def deployed_requires_current_zone(self) -> Resource:
         """A deployed resource must know its current zone."""
         if self.status == ResourceStatus.DEPLOYED and self.current_zone_id is None:
             raise ValueError(

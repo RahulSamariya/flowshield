@@ -9,8 +9,8 @@ The updater mutates the resource registry in place and returns a change record.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 from dataclasses import dataclass
+from datetime import UTC, datetime
 
 from src.models.event import RawEvent, RawEventType
 from src.models.resource import Resource, ResourceStatus
@@ -80,7 +80,7 @@ class ResourceUpdater:
         elif new_status != ResourceStatus.DEPLOYED:
             # Non-deployed resources don't need a current zone.
             pass
-        resource.updated_at = datetime.now(timezone.utc)
+        resource.updated_at = datetime.now(UTC)
 
         return ResourceChange(
             resource_id=rid,
@@ -106,7 +106,7 @@ class ResourceUpdater:
         prev_status = resource.status
         new_status = ResourceStatus.UNAVAILABLE if blocked else ResourceStatus.AVAILABLE
         resource.status = new_status
-        resource.updated_at = datetime.now(timezone.utc)
+        resource.updated_at = datetime.now(UTC)
 
         return ResourceChange(
             resource_id=str(asset_id),

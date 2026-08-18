@@ -66,9 +66,6 @@ from __future__ import annotations
 from src.engine.priority_config import DEFAULT_CONFIG, PriorityConfig
 from src.engine.priority_context import IncidentContext
 from src.engine.priority_result import (
-    FactorScore,
-    PriorityLevel,
-    PriorityResult,
     RC_CRITICAL_FACILITY_HIGH,
     RC_CRITICAL_FACILITY_LOW,
     RC_DEADLINE_IMMINENT,
@@ -82,9 +79,11 @@ from src.engine.priority_result import (
     RC_SEVERITY_HIGH,
     RC_SEVERITY_LOW,
     RC_SEVERITY_MEDIUM,
+    FactorScore,
+    PriorityLevel,
+    PriorityResult,
 )
 from src.models.incident import SeverityLevel
-
 
 # ── level → band thresholds ───────────────────────────────────────────────────
 _LEVEL_THRESHOLDS: list[tuple[float, PriorityLevel]] = [

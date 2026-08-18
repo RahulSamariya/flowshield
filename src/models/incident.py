@@ -10,7 +10,7 @@ Flow position:
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import StrEnum
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -97,8 +97,8 @@ class Incident(BaseModel):
 
     # ── lifecycle ─────────────────────────────────────────────────────────
     status: IncidentStatus = Field(default=IncidentStatus.OPEN)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     resolved_at: datetime | None = Field(default=None)
 
     # ── source traceability ───────────────────────────────────────────────
@@ -117,7 +117,7 @@ class Incident(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def resolved_at_requires_resolved_status(self) -> "Incident":
+    def resolved_at_requires_resolved_status(self) -> Incident:
         if self.resolved_at is not None and self.status not in (
             IncidentStatus.RESOLVED,
             IncidentStatus.CANCELLED,
@@ -128,7 +128,7 @@ class Incident(BaseModel):
         return self
 
     @model_validator(mode="after")
-    def primary_zone_in_affected(self) -> "Incident":
+    def primary_zone_in_affected(self) -> Incident:
         """Primary zone_id must appear in affected_zone_ids when that list is non-empty."""
         if self.affected_zone_ids and self.zone_id not in self.affected_zone_ids:
             raise ValueError(

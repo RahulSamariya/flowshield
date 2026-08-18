@@ -39,21 +39,19 @@ from src.engine.priority_config import DEFAULT_CONFIG, PriorityConfig
 from src.engine.priority_context import IncidentContext
 from src.engine.priority_engine import IncidentPriorityEngine
 from src.engine.priority_result import (
-    PriorityLevel,
     RC_CRITICAL_FACILITY_HIGH,
     RC_CRITICAL_FACILITY_LOW,
     RC_DEADLINE_IMMINENT,
+    RC_INFRA_HIGH_DEPENDENCY,
     RC_POPULATION_LARGE,
     RC_POPULATION_MODERATE,
     RC_ROAD_BLOCKED,
     RC_SEVERITY_CRITICAL,
-    RC_SEVERITY_HIGH,
     RC_SEVERITY_LOW,
     RC_SEVERITY_MEDIUM,
-    RC_INFRA_HIGH_DEPENDENCY,
+    PriorityLevel,
 )
-from src.models.incident import Incident, IncidentStatus, SeverityLevel
-
+from src.models.incident import Incident, SeverityLevel
 
 # ── shared helpers ────────────────────────────────────────────────────────────
 

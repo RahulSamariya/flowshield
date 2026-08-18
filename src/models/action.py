@@ -11,7 +11,7 @@ Flow position:
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import StrEnum
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -85,7 +85,7 @@ class Action(BaseModel):
 
     # ── lifecycle ─────────────────────────────────────────────────────────
     status: ActionStatus = Field(default=ActionStatus.PENDING)
-    decided_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    decided_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     started_at: datetime | None = Field(default=None)
     completed_at: datetime | None = Field(default=None)
 
@@ -99,7 +99,7 @@ class Action(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def completed_at_requires_terminal_status(self) -> "Action":
+    def completed_at_requires_terminal_status(self) -> Action:
         terminal = {ActionStatus.DONE, ActionStatus.FAILED, ActionStatus.CANCELLED}
         if self.completed_at is not None and self.status not in terminal:
             raise ValueError(
@@ -108,7 +108,7 @@ class Action(BaseModel):
         return self
 
     @model_validator(mode="after")
-    def started_at_ordering(self) -> "Action":
+    def started_at_ordering(self) -> Action:
         if self.started_at and self.completed_at:
             if self.started_at > self.completed_at:
                 raise ValueError("started_at must not be after completed_at.")

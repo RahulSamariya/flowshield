@@ -5,7 +5,6 @@ from pydantic import ValidationError
 
 from src.models.resource import Resource, ResourceStatus, ResourceType
 
-
 # ── helpers ────────────────────────────────────────────────────────────────────
 
 def minimal_resource(**overrides) -> dict:

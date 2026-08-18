@@ -29,7 +29,7 @@ Norms:    rainfall  / 100.0  (100 mm/hr ≈ 1.0)
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from src.models.incident import Incident, IncidentStatus, SeverityLevel
@@ -75,7 +75,7 @@ def _risk_score(zone: ZoneStatus) -> float:
 
 
 def _incident_title(zone_id: str, severity: SeverityLevel) -> str:
-    return f"[{severity.upper()}] Flood incident — zone {zone_id}"
+    return f"[{severity.upper()}] Flood incident - zone {zone_id}"
 
 
 class Detector:
@@ -104,7 +104,7 @@ class Detector:
 
         Returns the list of currently open incidents sorted by risk_score desc.
         """
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         for zone_id, zone in state.zones.items():
             existing = incidents.get(zone_id)

@@ -5,7 +5,6 @@ from pydantic import ValidationError
 
 from src.models.situation import SituationState, ZoneSeverity, ZoneStatus
 
-
 # ── ZoneStatus ─────────────────────────────────────────────────────────────────
 
 class TestZoneStatus:

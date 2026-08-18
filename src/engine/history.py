@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -25,7 +25,7 @@ class EngineRecord:
     """Immutable snapshot of one engine processing cycle."""
 
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    occurred_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    occurred_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     # ── source ────────────────────────────────────────────────────────────
     raw_event_type: str = ""

@@ -5,7 +5,6 @@ from pydantic import ValidationError
 
 from src.models.outcome import Outcome
 
-
 # ── helpers ────────────────────────────────────────────────────────────────────
 
 def minimal_outcome(**overrides) -> dict:

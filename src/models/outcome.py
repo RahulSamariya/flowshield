@@ -12,7 +12,7 @@ Flow position:
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -73,7 +73,7 @@ class Outcome(BaseModel):
     )
 
     # ── timestamps ────────────────────────────────────────────────────────
-    recorded_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    recorded_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     # ── validators ────────────────────────────────────────────────────────
 
@@ -85,7 +85,7 @@ class Outcome(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def failed_outcome_needs_notes(self) -> "Outcome":
+    def failed_outcome_needs_notes(self) -> Outcome:
         """Require notes when an action failed — forces explicit documentation."""
         if not self.success and not self.notes.strip():
             raise ValueError(

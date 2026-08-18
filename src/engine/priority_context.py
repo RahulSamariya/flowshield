@@ -39,7 +39,7 @@ infra_dependency_count
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 from src.models.incident import Incident
 

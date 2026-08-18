@@ -13,7 +13,7 @@ All IDs are stable strings so tests can reference them directly.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from src.models.event import RawEvent, RawEventType
 from src.models.resource import Resource, ResourceStatus, ResourceType
@@ -100,7 +100,7 @@ def _evt(
         city=CITY,
         zone_id=zone,
         source=source,
-        occurred_at=datetime(2025, 7, 10, 8, minute, 0, tzinfo=timezone.utc),
+        occurred_at=datetime(2025, 7, 10, 8, minute, 0, tzinfo=UTC),
         payload=payload,
     )
 

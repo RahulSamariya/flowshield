@@ -25,11 +25,10 @@ The worst severity across all signals wins for the zone.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from src.models.evidence import Evidence
-from src.models.situation import SituationState, ZoneSeverity, ZoneStatus, SEVERITY_RANK
-
+from src.models.situation import SEVERITY_RANK, SituationState, ZoneSeverity, ZoneStatus
 
 # ── thresholds ─────────────────────────────────────────────────────────────────
 
@@ -118,7 +117,7 @@ class Ingestor:
             candidates.append(ZoneSeverity.WATCH)
 
         zone.severity = _max_severity(*candidates)
-        zone.last_updated = datetime.now(timezone.utc)
+        zone.last_updated = datetime.now(UTC)
 
-        state.updated_at = datetime.now(timezone.utc)
+        state.updated_at = datetime.now(UTC)
         return zone

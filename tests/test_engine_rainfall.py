@@ -3,16 +3,16 @@
 import pytest
 
 from src.engine.engine import SituationEngine
-from src.models.event import RawEvent, RawEventType
-from src.models.incident import IncidentStatus, SeverityLevel
+from src.models.incident import SeverityLevel
 from src.models.situation import ZoneSeverity
 from tests.scenarios.ward12 import (
-    CITY, ZONE,
-    make_resources,
+    CITY,
+    SCENARIO_EXTREME_RAIN,
+    SCENARIO_HEAVY_RAIN,
     SCENARIO_LIGHT_RAIN,
     SCENARIO_MODERATE_RAIN,
-    SCENARIO_HEAVY_RAIN,
-    SCENARIO_EXTREME_RAIN,
+    ZONE,
+    make_resources,
 )
 
 

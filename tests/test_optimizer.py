@@ -41,12 +41,10 @@ from src.engine.optimizer_result import (
     UA_NO_CAPABLE_RESOURCE,
     UA_NO_RESOURCE,
 )
-from src.engine.priority_config import DEFAULT_CONFIG
 from src.engine.priority_context import IncidentContext
 from src.engine.priority_engine import IncidentPriorityEngine
 from src.models.incident import Incident, SeverityLevel
 from src.models.resource import Resource, ResourceStatus, ResourceType
-
 
 # ── shared helpers ────────────────────────────────────────────────────────────
 

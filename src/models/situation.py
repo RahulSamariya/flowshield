@@ -11,7 +11,7 @@ Flow position:
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import StrEnum
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -78,7 +78,7 @@ class ZoneStatus(BaseModel):
         description="Number of Evidence records that contributed to this status.",
     )
     last_updated: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
+        default_factory=lambda: datetime.now(UTC),
         description="UTC timestamp of the last update to this zone status.",
     )
 
@@ -107,7 +107,7 @@ class SituationState(BaseModel):
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     city: str = Field(..., min_length=1, max_length=100)
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     zones: dict[str, ZoneStatus] = Field(
         default_factory=dict,
         description="Mapping of zone_id to its current status.",
@@ -123,7 +123,7 @@ class SituationState(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def zone_keys_match_ids(self) -> "SituationState":
+    def zone_keys_match_ids(self) -> SituationState:
         """Dict keys must match the embedded zone_id."""
         for key, zone in self.zones.items():
             if key != zone.zone_id:

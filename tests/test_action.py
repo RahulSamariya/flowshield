@@ -1,11 +1,11 @@
 """Unit tests for the Action domain model."""
 
+from datetime import UTC, datetime, timedelta
+
 import pytest
-from datetime import datetime, timedelta, timezone
 from pydantic import ValidationError
 
 from src.models.action import Action, ActionStatus
-
 
 # ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -29,7 +29,7 @@ class TestActionValid:
         assert a.priority == 1
 
     def test_done_with_timestamps(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         started = now - timedelta(hours=2)
         a = Action(**minimal_action(
             status=ActionStatus.DONE,
@@ -48,7 +48,7 @@ class TestActionValid:
             if s in (ActionStatus.DONE, ActionStatus.FAILED, ActionStatus.CANCELLED):
                 Action(**minimal_action(
                     status=s,
-                    completed_at=datetime.now(timezone.utc),
+                    completed_at=datetime.now(UTC),
                 ))
             else:
                 Action(**minimal_action(status=s))
@@ -69,11 +69,11 @@ class TestActionInvalid:
         with pytest.raises(ValidationError, match="completed_at may only be set"):
             Action(**minimal_action(
                 status=ActionStatus.PENDING,
-                completed_at=datetime.now(timezone.utc),
+                completed_at=datetime.now(UTC),
             ))
 
     def test_started_after_completed_raises(self):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         with pytest.raises(ValidationError, match="started_at must not be after completed_at"):
             Action(**minimal_action(
                 status=ActionStatus.DONE,

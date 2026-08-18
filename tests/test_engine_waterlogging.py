@@ -1,11 +1,12 @@
 """Tests: citizen waterlogging event through the full engine pipeline."""
 
+from datetime import UTC
+
 import pytest
 
 from src.engine.engine import SituationEngine
 from src.engine.normalizer import EventNormalizer, NormalizationError
 from src.models.event import RawEvent, RawEventType
-from src.models.incident import IncidentStatus, SeverityLevel
 from src.models.situation import ZoneSeverity
 from tests.scenarios.ward12 import CITY, ZONE, make_resources
 
@@ -18,13 +19,13 @@ def engine():
 
 
 def _waterlogging_event(water_level_m: float, affected_people: int) -> RawEvent:
-    from datetime import datetime, timezone
+    from datetime import datetime
     return RawEvent(
         event_type=RawEventType.WATERLOGGING,
         city=CITY,
         zone_id=ZONE,
         source="citizen",
-        occurred_at=datetime(2025, 7, 10, 9, 0, 0, tzinfo=timezone.utc),
+        occurred_at=datetime(2025, 7, 10, 9, 0, 0, tzinfo=UTC),
         payload={"water_level_m": water_level_m, "affected_people": affected_people},
     )
 
@@ -77,7 +78,7 @@ class TestWaterloggingNormalization:
 class TestWaterloggingEngine:
     def test_low_waterlogging_creates_watch(self, engine):
         # 0.6 m → WATCH (threshold is 0.5)
-        record = engine.process(_waterlogging_event(0.6, 100))
+        engine.process(_waterlogging_event(0.6, 100))
         assert engine.state.zones[ZONE].severity == ZoneSeverity.WATCH
 
     def test_warning_waterlogging(self, engine):
@@ -100,12 +101,13 @@ class TestWaterloggingEngine:
         # No population → base score
         engine_a = SituationEngine(city=CITY)
         engine_a.resources.update(make_resources())
-        from datetime import datetime, timezone
+        from datetime import datetime
+
         from src.models.event import RawEvent
         event_no_pop = RawEvent(
             event_type=RawEventType.WATERLOGGING,
             city=CITY, zone_id=ZONE, source="citizen",
-            occurred_at=datetime(2025, 7, 10, 9, 0, tzinfo=timezone.utc),
+            occurred_at=datetime(2025, 7, 10, 9, 0, tzinfo=UTC),
             payload={"water_level_m": 1.0},
         )
         engine_a.process(event_no_pop)
@@ -116,7 +118,7 @@ class TestWaterloggingEngine:
         event_pop = RawEvent(
             event_type=RawEventType.WATERLOGGING,
             city=CITY, zone_id=ZONE, source="citizen",
-            occurred_at=datetime(2025, 7, 10, 9, 0, tzinfo=timezone.utc),
+            occurred_at=datetime(2025, 7, 10, 9, 0, tzinfo=UTC),
             payload={"water_level_m": 1.0, "affected_people": 4000},
         )
         engine_b.process(event_pop)

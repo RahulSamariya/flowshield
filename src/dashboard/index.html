@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowShield Command Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+    <div class="glow-container"></div>
+    
+    <header class="app-header">
+        <div class="header-left">
+            <div class="logo-area">
+                <span class="logo-shield">🛡️</span>
+                <div class="logo-text">
+                    <h1>FLOWSHIELD</h1>
+                    <p>Decision Support & Situation Command</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header-center">
+            <div class="stat-badge" id="system-status-container">
+                <span class="pulse-indicator status-normal" id="status-pulse"></span>
+                <span class="status-label">SYSTEM SEVERITY:</span>
+                <span class="status-value" id="overall-severity-badge">NORMAL</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button id="reset-scenario-btn" class="btn btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                Reset Scenario
+            </button>
+            <span class="city-location">📍 <span id="current-city">AHMEDABAD</span></span>
+        </div>
+    </header>
+
+    <main class="dashboard-grid">
+        <!-- FIRST COLUMN: Ingestion Timeline & Manual Reporter -->
+        <section class="grid-card col-span-3" id="timeline-card">
+            <div class="card-header">
+                <h2>Citizen Incident Agent</h2>
+                <span class="card-subtitle">Real-time parser</span>
+            </div>
+            
+            <div class="reporter-panel">
+                <h3>Report New Incident</h3>
+                <p class="panel-instructions">Simulate citizen voice/text input to Granite AI.</p>
+                <div class="preset-buttons">
+                    <button class="preset-btn" data-text="Severe rainfall in Ward 12 Central. Water is waist-deep near Ahmedabad Hospital, roads are completely blocked!">🏥 Hospital Crisis (W12-C)</button>
+                    <button class="preset-btn" data-text="North school street drainage is fully clogged by trash. Water is about a meter high, flooding nearby yards.">🏫 School Flooding (W12-N)</button>
+                    <button class="preset-btn" data-text="Moderate rain in Ward 12 South. Water logging on industrial roads, cars are unable to pass.">🏭 Industrial blockage (W12-S)</button>
+                </div>
+                <div class="input-group">
+                    <textarea id="report-input-text" placeholder="Type a raw incident report... (e.g., 'Heavy flooding in school lane, water-logging is high')"></textarea>
+                    <div class="input-controls">
+                        <select id="zone-hint-select">
+                            <option value="">No Zone Hint (Auto-Detect)</option>
+                            <option value="W12-N">W12-N (North Sub-Ward)</option>
+                            <option value="W12-C">W12-C (Central Sub-Ward)</option>
+                            <option value="W12-S">W12-S (South Sub-Ward)</option>
+                            <option value="DEPOT">DEPOT (Resource Depot)</option>
+                        </select>
+                        <button id="submit-report-btn" class="btn btn-primary">
+                            <span class="btn-spinner hidden"></span>
+                            Ingest Incident
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-container">
+                <h3>Incident Activity Timeline</h3>
+                <div class="timeline-flow" id="timeline-flow-list">
+                    <!-- Events populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECOND COLUMN: Active Incidents & Priority Rankings -->
+        <section class="grid-card col-span-5" id="incidents-card">
+            <div class="card-tabs">
+                <button class="tab-btn active" data-target="active-incidents-tab">
+                    Active Incidents (<span id="active-incidents-count">0</span>)
+                </button>
+                <button class="tab-btn" data-target="prioritization-tab">
+                    Priority Ranking & Explanations
+                </button>
+            </div>
+            
+            <div class="tab-content" id="active-incidents-tab">
+                <div class="situation-summary-panel">
+                    <div class="summary-metric">
+                        <span class="metric-val" id="summary-monitored-zones">0</span>
+                        <span class="metric-lbl">Monitored Zones</span>
+                    </div>
+                    <div class="summary-metric">
+                        <span class="metric-val" id="summary-open-incidents">0</span>
+                        <span class="metric-lbl">Open Incidents</span>
+                    </div>
+                    <div class="summary-metric">
+                        <span class="metric-val critical-text" id="summary-critical-zones">0</span>
+                        <span class="metric-lbl">Critical Zones</span>
+                    </div>
+                </div>
+                <div class="incidents-list" id="active-incidents-list">
+                    <!-- Incidents populated by JS -->
+                </div>
+            </div>
+            
+            <div class="tab-content hidden" id="prioritization-tab">
+                <div class="priority-scoring-list" id="priority-ranking-list">
+                    <!-- Priorities populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- THIRD COLUMN: Resources & Allocations -->
+        <section class="grid-card col-span-4" id="resources-card">
+            <div class="card-tabs">
+                <button class="tab-btn active" data-target="available-resources-tab">
+                    Available Resources (<span id="available-resources-count">0</span>)
+                </button>
+                <button class="tab-btn" data-target="allocation-actions-tab">
+                    Recommended Allocations
+                </button>
+            </div>
+
+            <div class="tab-content" id="available-resources-tab">
+                <div class="resources-list" id="available-resources-list">
+                    <!-- Resources populated by JS -->
+                </div>
+            </div>
+
+            <div class="tab-content hidden" id="allocation-actions-tab">
+                <div class="allocations-container">
+                    <h3>Assignments Made</h3>
+                    <div class="assignments-list" id="optimization-assignments-list">
+                        <!-- Assignments populated by JS -->
+                    </div>
+                    
+                    <h3 class="gap-header">Resource gaps (Requires escalation)</h3>
+                    <div class="gaps-list" id="optimization-gaps-list">
+                        <!-- Gaps populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- FOURTH COLUMN (FULL WIDTH LOWER ROW): WHY Panel & Response Actions -->
+        <section class="grid-card col-span-7" id="why-panel-card">
+            <div class="card-header">
+                <h2>AI Reasoning: "WHY" Explanation Panel</h2>
+                <span class="card-subtitle">Powered by IBM Granite</span>
+            </div>
+            <div class="why-tabs">
+                <button class="why-tab-btn active" data-target="why-situation">Situation Summary</button>
+                <button class="why-tab-btn" data-target="why-priorities">Priority Decisions</button>
+                <button class="why-tab-btn" data-target="why-assignments">Resource Assignments</button>
+                <button class="why-tab-btn" data-target="why-response-plan">Response SOP Plan</button>
+            </div>
+            <div class="why-content-container">
+                <div class="why-tab-content" id="why-situation">
+                    <div class="source-tag" id="why-situation-source">SOURCE: --</div>
+                    <pre class="reasoning-text" id="why-situation-text">Awaiting data...</pre>
+                </div>
+                <div class="why-tab-content hidden" id="why-priorities">
+                    <div class="source-tag" id="why-priorities-source">SOURCE: --</div>
+                    <pre class="reasoning-text" id="why-priorities-text">Awaiting data...</pre>
+                </div>
+                <div class="why-tab-content hidden" id="why-assignments">
+                    <div class="source-tag" id="why-assignments-source">SOURCE: --</div>
+                    <pre class="reasoning-text" id="why-assignments-text">Awaiting data...</pre>
+                </div>
+                <div class="why-tab-content hidden" id="why-response-plan">
+                    <div class="source-tag" id="why-response-plan-source">SOURCE: --</div>
+                    <pre class="reasoning-text" id="why-response-plan-text">Awaiting data...</pre>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid-card col-span-5" id="response-actions-card">
+            <div class="card-header">
+                <h2>Generated Response Plan Actions</h2>
+                <span class="card-subtitle">Operational task list</span>
+            </div>
+            <div class="actions-table-container">
+                <table class="actions-table">
+                    <thead>
+                        <tr>
+                            <th>Action ID</th>
+                            <th>Incident</th>
+                            <th>Resource</th>
+                            <th>Status</th>
+                            <th>Decision Rationale</th>
+                        </tr>
+                    </thead>
+                    <tbody id="response-actions-tbody">
+                        <!-- Actions populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="app-footer">
+        <p>&copy; 2026 FlowShield Support Platform - Gujarat Hackathon 2026</p>
+        <span class="footer-build">V1.0.0 (Production Core Engined)</span>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
