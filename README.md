@@ -55,30 +55,52 @@ scripts/
 tests/              ← 586 tests across all modules
 ```
 
-## Getting started
+## Getting started & Running on another system/laptop
 
+### 1. Local Python Setup (Virtual Environment)
+To run the project on a fresh machine:
 ```bash
-# Install
-pip install -e ".[dev]"
+# Clone the repository
+git clone https://github.com/RahulSamariya/flowshield.git
+cd flowshield
+
+# Create and activate python virtual environment (Python 3.11+)
+python -m venv .venv
+# On Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+# On macOS / Linux:
+source .venv/bin/activate
+
+# Install dependencies from lockfile
+pip install -r requirements.txt
 
 # Run all tests
 pytest
 
-# Run the end-to-end workflow (uses deterministic fallback — no API key needed)
+# Run the end-to-end workflow (uses deterministic fallback)
 python scripts/run_workflow.py
-
-# Lint
-ruff check src/ tests/ scripts/
 ```
 
-### Run the dashboard
-
+### 2. Run the Dashboard
+Start the local dashboard server:
 ```bash
-python scripts/serve_dashboard.py        # default port 8000
-# open http://localhost:8000/
-```
+# Run server on port 8080 (or customize by passing port as argument)
+python scripts/serve_dashboard.py 8080
 
+# Open http://localhost:8080/ in your browser
+```
 The dashboard loads the Ward 12 heavy-rain scenario on start, lets you submit citizen reports live, and shows the full decision trace plus the WHY panel. Note: on Windows, set `$env:PYTHONIOENCODING="utf-8"` before running scripts that print Unicode.
+
+### 3. Running with Docker
+If the machine has Docker installed:
+```bash
+# Build the container image
+docker build -t flowshield-dashboard .
+
+# Run the container mapping VM port 8080
+docker run -p 8080:8080 flowshield-dashboard
+```
+Open `http://localhost:8080` in your web browser.
 
 ### IBM Granite
 
