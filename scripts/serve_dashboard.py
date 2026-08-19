@@ -330,6 +330,14 @@ class DashboardHTTPHandler(BaseHTTPRequestHandler):
         parsed_url = urllib.parse.urlparse(self.path)
         path = parsed_url.path
 
+        if path in ("/health", "/api/health"):
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            payload = {"status": "healthy", "service": "flowshield-command-dashboard"}
+            self.wfile.write(json.dumps(payload).encode("utf-8"))
+            return
+
         if path == "/api/state":
             # Expose dashboard state
             self.send_response(200)
@@ -468,7 +476,15 @@ def run(port=8000):
 
 
 if __name__ == "__main__":
-    port_val = 8000
+    env_port = os.environ.get("PORT") or os.environ.get("VCAP_APP_PORT")
+    if env_port:
+        try:
+            port_val = int(env_port)
+        except ValueError:
+            port_val = 8000
+    else:
+        port_val = 8000
+
     if len(sys.argv) > 1:
         try:
             port_val = int(sys.argv[1])

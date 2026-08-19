@@ -1,0 +1,12 @@
+---
+applications:
+  - name: flowshield-dashboard
+    memory: 256M
+    instances: 1
+    random-route: true
+    buildpack: python_buildpack
+    command: python scripts/serve_dashboard.py
+    env:
+      PYTHONIOENCODING: "utf-8"
+      GRANITE_API_URL: "https://us-south.ml.cloud.ibm.com"
+      GRANITE_MODEL_ID: "ibm/granite-3-8b-instruct"
