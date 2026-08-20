@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         let textContent = reasoningItem.text || "";
         if (reasoningItem.structured && reasoningItem.structured.steps) {
-            textContent += "\n\nPlan Action Steps:\n" + reasoningItem.structured.steps.map((st, i) => `${i+1}. ${st}`).join("\n");
+            textContent += "\n\nPlan Action Steps:\n" + reasoningItem.structured.steps.map((st, i) => `${i+1}. ${st.action || st}`).join("\n");
         }
         textElement.innerText = textContent.trim();
     }

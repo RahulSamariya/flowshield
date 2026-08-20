@@ -8,6 +8,13 @@ from __future__ import annotations
 import json
 import os
 import sys
+
+# Load environmental configs if present
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 import traceback
 import urllib.parse
 import uuid

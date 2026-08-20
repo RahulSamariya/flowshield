@@ -34,3 +34,11 @@ addopts = "-v"
 
 [tool.coverage.run]
 source = ["flowshield"]
+
+[tool.pyrefly]
+search_path = [
+    ".",
+    "C:/Users/DELL/AppData/Local/Programs/Python/Python314/Lib/site-packages"
+]
+
+

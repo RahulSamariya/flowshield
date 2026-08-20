@@ -22,6 +22,7 @@ from __future__ import annotations
 import json
 import os
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 
@@ -49,6 +50,9 @@ class GraniteConfig:
     api_key: str = field(
         default_factory=lambda: os.getenv("GRANITE_API_KEY", "")
     )
+    project_id: str = field(
+        default_factory=lambda: os.getenv("WATSONX_PROJECT_ID", "")
+    )
     model_id: str = field(
         default_factory=lambda: os.getenv(
             "GRANITE_MODEL_ID", "ibm/granite-3-8b-instruct"
@@ -74,6 +78,29 @@ class GraniteClient:
 
     def __init__(self, config: GraniteConfig | None = None) -> None:
         self._cfg = config or GraniteConfig()
+        self._token: str | None = None
+
+    def _get_iam_token(self, api_key: str) -> str:
+        url = "https://iam.cloud.ibm.com/identity/token"
+        data = urllib.parse.urlencode({
+            "grant_type": "urn:ibm:params:oauth:grant-type:apikey",
+            "apikey": api_key
+        }).encode("utf-8")
+        
+        req = urllib.request.Request(
+            url,
+            data=data,
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+            method="POST"
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                res = json.loads(resp.read().decode("utf-8"))
+                return res["access_token"]
+        except Exception as exc:
+            raise GraniteUnavailable(
+                f"Failed to exchange IBM IAM API key for token: {exc}"
+            ) from exc
 
     def generate(self, prompt: str) -> str:
         """Send ``prompt`` to Granite and return the generated text.
@@ -89,11 +116,17 @@ class GraniteClient:
                 "Set the environment variable or pass GraniteConfig explicitly."
             )
 
+        if not self._token:
+            if self._cfg.api_key.startswith("eyJ"):
+                self._token = self._cfg.api_key
+            else:
+                self._token = self._get_iam_token(self._cfg.api_key)
+
         url = (
             f"{self._cfg.api_url.rstrip('/')}"
             f"/ml/v1/text/generation?version=2023-05-29"
         )
-        body = json.dumps({
+        payload = {
             "model_id": self._cfg.model_id,
             "input": prompt,
             "parameters": {
@@ -102,14 +135,17 @@ class GraniteClient:
                 "temperature": self._cfg.temperature,
                 "stop_sequences": ["<|end|>"],
             },
-        }).encode()
+        }
+        if self._cfg.project_id:
+            payload["project_id"] = self._cfg.project_id
+        body = json.dumps(payload).encode()
 
         req = urllib.request.Request(
             url,
             data=body,
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {self._cfg.api_key}",
+                "Authorization": f"Bearer {self._token}",
                 "Accept": "application/json",
             },
             method="POST",
@@ -119,8 +155,12 @@ class GraniteClient:
             with urllib.request.urlopen(req, timeout=self._cfg.timeout_seconds) as resp:
                 raw = resp.read().decode()
         except urllib.error.HTTPError as exc:
+            try:
+                err_body = exc.read().decode("utf-8")
+            except Exception:
+                err_body = "unavailable"
             raise GraniteUnavailable(
-                f"Granite returned HTTP {exc.code}: {exc.reason}"
+                f"Granite returned HTTP {exc.code}: {exc.reason} - Body: {err_body}"
             ) from exc
         except (urllib.error.URLError, OSError, TimeoutError) as exc:
             raise GraniteUnavailable(

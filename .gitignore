@@ -24,3 +24,6 @@ env/
 Thumbs.db
 .idea/
 .vscode/
+
+# Local Environment Secrets
+.env
